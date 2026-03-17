@@ -79,11 +79,6 @@ No setup required 🚀
 
 ---
 
-## 📸 Screenshots  
-https://github.com/sandipkumarnke9-design/cyber-threat-detection-system.git
-
----
-
 ## ⚠️ Note  
 
 This project is simulation-based and does not require a server.  
