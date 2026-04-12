@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Threat Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ef4444 0%, #f59e0b 50%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+        }
+
+        .status-card.safe::before {
+            color: #10b981;
+        }
+
+        .status-card.warning::before {
+            color: #f59e0b;
+        }
+
+        .status-card.danger::before {
+            color: #ef4444;
+        }
+
+        .status-card h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .status-card .label {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .threat-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .threat-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .threat-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .threat-item.critical {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .threat-item.high {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .threat-item.medium {
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+        }
+
+        .threat-item.low {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .threat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .threat-type {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .threat-severity {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .threat-severity.critical {
+            background: #ef4444;
+            color: white;
+        }
+
+        .threat-severity.high {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .threat-severity.medium {
+            background: #eab308;
+            color: #1e293b;
+        }
+
+        .threat-severity.low {
+            background: #10b981;
+            color: white;
+        }
+
+        .threat-details {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .threat-time {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .log-container {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #64748b;
+            margin-right: 10px;
+        }
+
+        .log-type {
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.75rem;
+        }
+
+        .log-type.info {
+            background: #3b82f6;
+        }
+
+        .log-type.warning {
+            background: #f59e0b;
+        }
+
+        .log-type.error {
+            background: #ef4444;
+        }
+
+        .log-type.success {
+            background: #10b981;
+        }
+
+        .network-monitor {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .metric-card .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .metric-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-card .label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .scanner-section {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .input-group input::placeholder {
+            color: #64748b;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Cyber Threat Detection System</h1>
+            <p>Real-time Network Monitoring & Threat Analysis</p>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-card safe">
+                <h3>System Status</h3>
+                <div class="value" id="systemStatus">🟢 SECURE</div>
+                <div class="label">All systems operational</div>
+            </div>
+            <div class="status-card warning">
+                <h3>Active Threats</h3>
+                <div class="value" id="threatCount">0</div>
+                <div class="label">Detected threats</div>
+            </div>
+            <div class="status-card safe">
+                <h3>Blocked Attacks</h3>
+                <div class="value" id="blockedCount">0</div>
+                <div class="label">Successfully blocked</div>
+            </div>
+            <div class="status-card danger">
+                <h3>Alert Level</h3>
+                <div class="value" id="alertLevel">LOW</div>
+                <div class="label">Current threat level</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>🔍 Threat Scanner</h2>
+            <div class="scanner-section">
+                <div class="input-group">
+                    <input type="text" id="scanInput" placeholder="Enter IP address or domain to scan (e.g., 192.168.1.1)">
+                    <button class="btn btn-primary" onclick="scanTarget()">Scan Target</button>
+                </div>
+                <div class="progress-bar" id="progressBar" style="display: none;">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-success" onclick="startMonitoring()">▶️ Start Monitoring</button>
+                    <button class="btn btn-danger" onclick="stopMonitoring()">⏸️ Stop Monitoring</button>
+                    <button class="btn btn-primary" onclick="clearThreats()">🗑️ Clear Threats</button>
+                </div>
+            </div>
+
+            <div class="network-monitor">
+                <div class="metric-card">
+                    <div class="icon">📊</div>
+                    <div class="value" id="packetsAnalyzed">0</div>
+                    <div class="label">Packets Analyzed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="icon">🔥</div>
+                    <div class="value" id="firewallRules">247</div>
+                    <div class="label">Firewall Rules</div>
+                </div>
+                <div class="metric-card">
+                    <div class="icon">🌐</div>
+                    <div class="value" id="connections">0</div>
+                    <div class="label">Active Connections</div>
+                </div>
+                <div class="metric-card">
+                    <div class="icon">⚡</div>
+                    <div class="value" id="bandwidth">0 MB/s</div>
+                    <div class="label">Network Traffic</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="panel">
+                <h2>⚠️ Active Threats</h2>
+                <div class="threat-list" id="threatList">
+                    <div style="text-align: center; padding: 40px; color: #64748b;">
+                        No active threats detected
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📋 Security Logs</h2>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry">
+                        <span class="log-time">[00:00:00]</span>
+                        <span class="log-type success">INFO</span>
+                        System initialized
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let threats = [];
+        let monitoringActive = false;
+        let monitoringInterval;
+        let packetsCount = 0;
+        let blockedCount = 0;
+        let connectionsCount = 0;
+
+        const threatTypes = [
+            { type: 'SQL Injection', severity: 'critical', desc: 'Attempted database manipulation' },
+            { type: 'DDoS Attack', severity: 'critical', desc: 'Distributed denial of service detected' },
+            { type: 'Brute Force', severity: 'high', desc: 'Multiple failed login attempts' },
+            { type: 'Port Scanning', severity: 'high', desc: 'Unauthorized port scan detected' },
+            { type: 'Malware Activity', severity: 'critical', desc: 'Suspicious file execution' },
+            { type: 'XSS Attempt', severity: 'high', desc: 'Cross-site scripting detected' },
+            { type: 'Unauthorized Access', severity: 'medium', desc: 'Access from unknown location' },
+            { type: 'Phishing', severity: 'medium', desc: 'Suspicious email activity' },
+            { type: 'Data Exfiltration', severity: 'critical', desc: 'Unusual outbound data transfer' },
+            { type: 'Zero-Day Exploit', severity: 'critical', desc: 'Unknown vulnerability exploited' }
+        ];
+
+        function addLog(message, type = 'info') {
+            const container = document.getElementById('logContainer');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span class="log-type ${type}">${type.toUpperCase()}</span>
+                ${message}
+            `;
+            container.insertBefore(entry, container.firstChild);
+            
+            if (container.children.length > 50) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        function generateRandomIP() {
+            return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        }
+
+        function detectThreat() {
+            if (!monitoringActive) return;
+
+            const shouldDetect = Math.random() < 0.3;
+            
+            if (shouldDetect) {
+                const threat = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+                const newThreat = {
+                    id: Date.now(),
+                    type: threat.type,
+                    severity: threat.severity,
+                    description: threat.desc,
+                    source: generateRandomIP(),
+                    time: new Date().toLocaleTimeString()
+                };
+
+                threats.unshift(newThreat);
+                renderThreats();
+                updateStats();
+                
+                addLog(`Threat detected: ${threat.type} from ${newThreat.source}`, 'error');
+
+                if (threat.severity === 'critical') {
+                    blockedCount++;
+                    addLog(`Critical threat blocked from ${newThreat.source}`, 'warning');
+                }
+            }
+
+            packetsCount += Math.floor(Math.random() * 100) + 50;
+            connectionsCount = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('packetsAnalyzed').textContent = packetsCount.toLocaleString();
+            document.getElementById('connections').textContent = connectionsCount;
+            document.getElementById('bandwidth').textContent = (Math.random() * 10).toFixed(2) + ' MB/s';
+        }
+
+        function renderThreats() {
+            const container = document.getElementById('threatList');
+            
+            if (threats.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #64748b;">No active threats detected</div>';
+                return;
+            }
+
+            container.innerHTML = threats.map(threat => `
+                <div class="threat-item ${threat.severity}">
+                    <div class="threat-header">
+                        <span class="threat-type">${threat.type}</span>
+                        <span class="threat-severity ${threat.severity}">${threat.severity}</span>
+                    </div>
+                    <div class="threat-details">${threat.description}</div>
+                    <div class="threat-details">Source IP: ${threat.source}</div>
+                    <div class="threat-time">Detected at ${threat.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('threatCount').textContent = threats.length;
+            document.getElementById('blockedCount').textContent = blockedCount;
+
+            const criticalCount = threats.filter(t => t.severity === 'critical').length;
+            const highCount = threats.filter(t => t.severity === 'high').length;
+
+            let alertLevel = 'LOW';
+            let systemStatus = '🟢 SECURE';
+
+            if (criticalCount > 0) {
+                alertLevel = 'CRITICAL';
+                systemStatus = '🔴 UNDER ATTACK';
+            } else if (highCount > 2) {
+                alertLevel = 'HIGH';
+                systemStatus = '🟡 ELEVATED';
+            } else if (threats.length > 0) {
+                alertLevel = 'MEDIUM';
+                systemStatus = '🟡 MONITORING';
+            }
+
+            document.getElementById('alertLevel').textContent = alertLevel;
+            document.getElementById('systemStatus').textContent = systemStatus;
+        }
+
+        function startMonitoring() {
+            if (monitoringActive) return;
+            
+            monitoringActive = true;
+            addLog('Network monitoring started', 'success');
+            
+            monitoringInterval = setInterval(() => {
+                detectThreat();
+            }, 2000);
+        }
+
+        function stopMonitoring() {
+            if (!monitoringActive) return;
+            
+            monitoringActive = false;
+            clearInterval(monitoringInterval);
+            addLog('Network monitoring stopped', 'warning');
+        }
+
+        function clearThreats() {
+            threats = [];
+            renderThreats();
+            updateStats();
+            addLog('Threat list cleared', 'info');
+        }
+
+        function scanTarget() {
+            const input = document.getElementById('scanInput').value.trim();
+            
+            if (!input) {
+                addLog('Please enter a target to scan', 'warning');
+                return;
+            }
+
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            
+            progressBar.style.display = 'block';
+            progressFill.style.width = '0%';
+            
+            addLog(`Starting scan on target: ${input}`, 'info');
+
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(scanInterval);
+                    
+                    setTimeout(() => {
+                        progressBar.style.display = 'none';
+                        const vulnerabilities = Math.floor(Math.random() * 5);
+                        
+                        if (vulnerabilities > 0) {
+                            addLog(`Scan complete: ${vulnerabilities} vulnerabilities found on ${input}`, 'warning');
+                            
+                            for (let i = 0; i < vulnerabilities; i++) {
+                                const threat = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+                                const newThreat = {
+                                    id: Date.now() + i,
+                                    type: threat.type,
+                                    severity: threat.severity,
+                                    description: threat.desc,
+                                    source: input,
+                                    time: new Date().toLocaleTimeString()
+                                };
+                                threats.unshift(newThreat);
+                            }
+                            
+                            renderThreats();
+                            updateStats();
+                        } else {
+                            addLog(`Scan complete: No threats detected on ${input}`, 'success');
+                        }
+                    }, 500);
+                }
+            }, 300);
+        }
+
+        // Initialize
+        addLog('Cyber Threat Detection System ready', 'success');
+        addLog('Firewall rules loaded: 247 active rules', 'info');
+    </script>
+</body>
+</html>
