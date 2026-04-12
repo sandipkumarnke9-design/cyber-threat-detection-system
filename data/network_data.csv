@@ -1,0 +1,6 @@
+packet_size,duration,protocol,flag,label
+500,10,TCP,SF,0
+1500,2,UDP,SF,0
+3000,1,TCP,REJ,1
+100,20,ICMP,SF,0
+5000,0,TCP,REJ,1
