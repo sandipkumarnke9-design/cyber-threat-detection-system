@@ -1,121 +1,97 @@
-# 🛡️ Cyber Threat Detection System  
+# 🚀 Cyber Threat Detection System
 
-> 🔐 An interactive cybersecurity dashboard that simulates real-time threat detection, monitoring, and analysis using modern web technologies.
-
----
-
-## 🚀 About the Project  
-
-The **Cyber Threat Detection System** is a web-based application designed to simulate how modern Intrusion Detection Systems (IDS) monitor, analyze, and respond to cyber threats.
-
-It provides a real-time dashboard for:
-- Monitoring system/network activity  
-- Detecting simulated cyber attacks  
-- Analyzing security logs  
-- Scanning IP addresses or domains  
-
-This project demonstrates strong fundamentals in cybersecurity concepts, UI design, and JavaScript-based simulation.
+## 🔍 Overview
+This project is a Machine Learning-based Cyber Threat Detection System that analyzes network traffic and detects suspicious activities in real-time. It uses anomaly detection techniques to identify potential cyber threats and generate alerts.
 
 ---
 
-## ✨ Key Features  
-
-- 🔍 Target Scanner (IP/Domain)  
-- ⚠️ Real-Time Threat Detection (Simulated)  
-- 📊 Live Dashboard Metrics  
-- 📋 Dynamic Security Logs  
-- 🛑 Start / Stop Monitoring  
-- 🧠 Threat Classification (Low, Medium, High, Critical)  
-- 🧹 Clear Threat History  
+## ⚙️ Features
+- 🔍 Real-time network traffic monitoring
+- 🧠 Machine Learning-based anomaly detection (Random Forest)
+- 🌐 Flask-based web GUI for user interaction
+- 🚨 Automated alert system for suspicious activity
+- 📊 Feature extraction from network packets
 
 ---
 
-## 🛠️ Tech Stack  
-
-- Frontend: HTML, CSS, JavaScript  
-- Architecture: Client-side Simulation  
-- Deployment: Browser  
-
----
-
-## 🧠 System Design  
-
-The system uses event-driven programming and randomized logic to simulate cyber threats.
-
-Detection approach:
-- Signature-based simulation (known attacks)  
-- Behavior-based simulation (anomaly detection)  
-
-Simulated threats include:
-- SQL Injection  
-- DDoS Attack  
-- Brute Force  
-- XSS Attack  
-- Malware Activity  
+## 🛠️ Tech Stack
+- Python
+- Scikit-learn
+- Flask
+- Scapy
+- Pandas & NumPy
 
 ---
 
-## 📂 Project Structure  
-cyber-threat-detection-system/
+## 📁 Project Structure
+Cyber Threat Detection System/
 │
-├── index.html # Main application (UI + logic)
-├── README.md # Project documentation
+├── Backend/ # Flask backend
+│ └── app.py
 │
-└── screenshots/ # Project images (for preview)
-├── dashboard.png
-├── scanner.png
-├── logs.png
-└── threats.png
-
-
----
-
-## ▶️ Getting Started  
-
-No setup required 🚀  
-
-1. Clone the repository  
-2. Open index.html in any browser  
-
----
-
-## ⚠️ Note  
-
-This project is simulation-based and does not require a server.  
-All features run directly in the browser.
+├── Frontend/ # HTML GUI
+│ └── index.html
+│
+├── detector/ # Threat detection logic
+│ ├── detect.py
+│ └── alert.py
+│
+├── model/ # ML model training
+│ ├── train_model.py
+│ └── model.pkl
+│
+├── utils/ # Helper functions
+│ └── feature_extractor.py
+│
+├── data/ # Dataset
+│ └── network_data.csv
 
 ---
 
-## 🚀 Future Improvements  
+## ▶️ How to Run the Project
+python Backend/app.py
 
-- Backend integration (PHP / Node.js)  
-- Database integration  
-- AI/ML-based detection  
-- Authentication system  
+### 1️⃣ Clone Repository
+git clone https://github.com/sandipkumarnke9-design/cyber-threat-detection-system.git
+cd cyber-threat-detection-system
 
----
+## Install Dependencies
+pip install -r requirements.txt
 
-## 💼 Resume Description  
+## Train Model
+cd model
+python train_model.py
+cd ..
 
-Cyber Threat Detection System  
-Developed a real-time cybersecurity dashboard that simulates intrusion detection using JavaScript, including threat monitoring, classification, and log analysis.
+## Run Application
+python Backend/app.py
 
----
+##  Open in Browser
+http://127.0.0.1:5000
 
-## 👨‍💻 Author  
+### 🧪 Test Inputs
+# Normal Traffic
+Packet Size: 200
+Duration: 10
+Protocol: TCP
+Flag: SF
+👉 Output: Normal Traffic
+# Suspicious Traffic
+Packet Size: 5000
+Duration: 0
+Protocol: TCP
+Flag: REJ
+👉 Output: Threat Detected
 
-Sandip Kumar  
-https://github.com/sandipkumarnke9-design  
+📸 Demo
+<img width="1110" height="756" alt="image" src="https://github.com/user-attachments/assets/73f29bf8-b534-4706-8c9a-85b925ec93e2" />
 
----
+🔮 Future Enhancements
+📊 Dashboard with graphs and analytics
+📧 Email/SMS alert system
+🌍 Deployment on cloud (Render/AWS)
+🤖 Deep Learning model (LSTM)
 
-## 📧 Contact  
-
-Email: sandipkumarnke9@gmail.com  
-
----
-
-## ⭐ Support  
-
-If you like this project:  
-⭐ Star this repository  
+👨‍💻 Author
+Sandip Kumar
+GitHub: https://github.com/sandipkumarnke9-design
